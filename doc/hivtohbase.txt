@@ -1,0 +1,118 @@
+*********************
+import hdfs to hbase
+**********************
+hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.separator="," -Dimporttsv.columns=HBASE_ROW_KEY,cf tab8 /pop/hbaseexport.txt
+
+
+
+**********************
+hive to hbase
+**********************
+1. create external table
+
+CREATE TABLE sinchan(id int, name string, role string) 
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,cf1:name,cf1:role")
+TBLPROPERTIES ("hbase.table.name" = "azmat");
+	
+ 2.create another table
+
+hive> create table doramon(id int, name string, role string) row format delimited fields terminated by '\t';
+
+
+3. create dataset azmat.txt
+	1       azmat   develoer
+	2       megha   Housemanager
+
+
+4. load data
+hive> load data local inpath '/home/azmatsiddique/azmat.txt' into table testemp;
+hive> select * from testemp;
+
+5. overwrite data
+
+hive> insert overwrite table hbase_table_emp select * from testemp;
+hive> select * from hbase_table_emp;
+
+6. check on hbase
+hbase> scan'azmat'
+
+
+*****************************************************************************************
+
+
+
+********* admin
+hbase to hive
+***********
+
+create table in hbase
+
+hbase(main):002:0> create 'user', 'cf1', 'cf2'
+hbase(main):003:0> put 'user', 'row1', 'cf1:a', 'value1'
+hbase(main):004:0> put 'user', 'row1', 'cf1:b', 'value2'
+hbase(main):005:0> put 'user', 'row1', 'cf2:c', 'value3'
+hbase(main):006:0> put 'user', 'row2', 'cf2:c', 'value4'
+hbase(main):007:0> put 'user', 'row2', 'cf1:b', 'value5'
+hbase(main):008:0> put 'user', 'row3', 'cf1:a', 'value6'
+hbase(main):009:0> put 'user', 'row3', 'cf2:c', 'value7'
+hbase(main):010:0> describe 'user'
+hbase(main):011:0> scan 'user'
+
+hive> CREATE EXTERNAL TABLE hbase_table_user(key string, val1 string, val2 string, val3 string)
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = "cf1:a,cf1:b,cf2:c")
+TBLPROPERTIES("hbase.table.name" = "lol");
+
+*****************************************************************************
+mysql to hbase
+
++--------+-------------+------+-----+---------+-------+
+| Field  | Type        | Null | Key | Default | Extra |
++--------+-------------+------+-----+---------+-------+
+| id     | int(11)     | YES  |     | NULL    |       |
+| name   | varchar(20) | YES  |     | NULL    |       |
+| salary | float       | YES  |     | NULL    |       |
++--------+-------------+------+-----+---------+-------+
+
+
+
+create ‘yahoo’,’emp_details’
+
+sqoop import --connect jdbc:mysql://localhost/superman --username root --password root --table emp --hbase-table yahoo --column-family emp_details --hbase-row-key id -m 1
+
+//under Development
+********
+pig to hbase
+********
+add jar
+
+REGISTER /usr/local/hbase/lib/htrace-core-3.1.0-incubating.jar
+REGISTER /usr/local/hbase/lib/hbase-common-*.jar
+REGISTER /usr/local/hbase/lib/hbase-client-*.jar
+REGISTER /usr/local/hbase/lib/hbase-server-*.jar
+REGISTER /usr/local/hbase/lib/hbase-protocol-*.jar
+REGISTER /usr/local/hbase/lib/zookeeper-*.jar
+REGISTER /usr/local/hbase/lib/guava-*.jar
+REGISTER /usr/local/hbase/lib/hbase-hadoop2-compat-*.jar
+REGISTER /usr/local/hbase/lib/hbase-annotations-1.2.7.jar
+REGISTER /usr/local/hbase/lib/hbase-thrift-1.2.7.jar
+
+
+set hbase.zookeper.quorum 'localhost'
+
+
+grunt> raw = load '/home/ducat/Downloads/student.txt' USING PigStorage(',') as (StudentName:chararray,sector:chararray,qalification:chararray,DOB:chararray,score:float,state:chararray, randomName:chararray);
+
+grunt> STORE raw into 'hbase://studentAcad' USING  org.apache.pig.backend.hadoop.hbase.HBaseStorage('student_data:StudentName,student_data:sector,student_data:qalification,student_data:DOB,student_data:score,student_data:chararray,student_data:randomName')
+
+
+
+raw_data = LOAD'/home/ducat/azmat.csv' USING PigStorage(',') AS (id:int,name:varchar);
+STORE raw_data INTO
+'hbase://emp' USING
+org.apache.pig.backend.hadoop.hbase.HBaseStorage ('cf1:fname
+cf1:lname');*
+
+
+

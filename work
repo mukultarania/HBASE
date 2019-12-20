@@ -1,0 +1,50 @@
+HBASE
+
+basic
+
+>whoami
+>status
+>start-hbase.sh
+>exist 'tablename'    (to check table exist or not)
+>count 'tablename'	(to check total record)
+>is_disabled 'tablename'   (to check table is disable or not)
+
+create tableanex
+
+>list
+
+SHOW DATA OF TABLE
+
+>scan 'table name'
+>describe 'table name'
+
+DISABLE,DROP TABLE
+
+>disable 'table name'
+>drop 'table name'
+>truncate 'tablename'  (delete all data of table)
+>delete 'tablename','1','personal:name',timespan	(delete particular data)
+>deleteall 'tablename','1'	(to delete data of row)
+
+TO SEARCH DATA FROM TABLE
+
+>get 'table name','1',{COLUMN=> 'personal:name'}
+
+SECURITY
+
+>grant 'USER NAME','RWXCA'
+>user_permission 'tablename'
+
+Migrating DATA into HBASE
+
+method one
+>hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.separator=”,” -Dimporttsv.columns=HBASE_ROW_KEY,cf tab7 /one/test
+
+method two
+>hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.separator="," -Dimporttsv.bulk.output=hfile_tmp5 -Dimporttsv.columns=HBASE_ROW_KEY,cf TABLENAME /HADOOP_DIRECTORY
+
+
+
+
+
+
