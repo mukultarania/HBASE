@@ -1,0 +1,31 @@
+
+
+data set of above Program
+
+
+1201 Gopal 45000 Technical manager
+1202 Manisha 45000 Proof reader
+1203 Masthanvali 40000 Technical writer
+1204 Krian 40000 Hr Admin
+1205 Kranthi 30000 Op Admin 
+
+
+
+hive> CREATE TABLE IF NOT EXISTS employee ( eid int, name String, salary String, destination String) COMMENT ‘Employee details’ ROW FORMAT DELIMITED FIELDS TERMINATED BY ‘\t’ LINES TERMINATED BY ‘\n’ STORED AS TEXTFILE;
+
+hive> LOAD DATA LOCAL INPATH '/home/user/sample.txt' OVERWRITE INTO TABLE employee;
+
+
+
+
+
+hive Query
+--------------------------------------------------------------------------------------------------
+hive> SELECT * FROM employee WHERE Id=1205;
+hive> SELECT * FROM employee WHERE Salary>=40000;
+hive> SELECT * FROM employee WHERE Salary>40000 && Dept=TP;
+DROP INDEX index_salary ON employee;
+hive> SELECT * FROM employee WHERE salary>30000;
+hive> SELECT Id, Name, Dept FROM employee ORDER BY DEPT;
+hive> SELECT Dept,count(*) FROM employee GROUP BY DEPT;
+--------------------------------------------------------------------------------------------------
